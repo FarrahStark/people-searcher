@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PeopleSearch
 {
     public class Address
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual long AddressId { get; set; }
         public virtual long PersonId { get; set; }
         public virtual string Line1 { get; set; }
         public virtual string Line2 { get; set; }

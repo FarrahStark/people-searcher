@@ -14,7 +14,7 @@ namespace PeopleSearch.Tests.PersonControllerTests
         private readonly PersonController personController;
         private readonly Mock<PersonRepository> personRepositoryMock;
 
-        private SearchTests()
+        public SearchTests()
         {
             personRepositoryMock = new Mock<PersonRepository>();
             personRepositoryMock

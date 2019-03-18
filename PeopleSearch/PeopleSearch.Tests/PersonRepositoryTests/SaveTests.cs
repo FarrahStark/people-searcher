@@ -6,24 +6,17 @@ using Xunit;
 
 namespace PeopleSearch.Tests.PersonRepositoryTests
 {
-    public class SaveTests
+    public class SaveTests : InMemoryDatabaseTest
     {
-        private readonly PersonRepository personRepository;
-
-        private SaveTests()
-        {
-            personRepository = new PersonRepository();
-        }
-
         [Fact]
         public async Task When_save_is_called_the_person_is_persisted_with_an_id()
         {
             var person = DataGenerator.GetPerson();
             person.PersonId = 0;
-            var savedPerson = await personRepository.Save(person);
+            var savedPerson = await PersonRepository.Save(person);
             savedPerson.PersonId.ShouldNotBe(0, "A new Id should be generated for the person");
 
-            var searchedPerson = (await personRepository.SearchByNames(
+            var searchedPerson = (await PersonRepository.SearchByNames(
                     $"{person.FirstName} {person.MiddleName} {person.LastName}"))
                 .FirstOrDefault();
 

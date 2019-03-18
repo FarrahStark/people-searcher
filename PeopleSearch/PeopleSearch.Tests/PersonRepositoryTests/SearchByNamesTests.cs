@@ -8,15 +8,8 @@ using Xunit;
 
 namespace PeopleSearch.Tests.PersonRepositoryTests
 {
-    public class SearchByNamesTests
+    public class SearchByNamesTests : InMemoryDatabaseTest
     {
-        private readonly PersonRepository personRepository;
-
-        private SearchByNamesTests()
-        {
-            personRepository = new PersonRepository();
-        }
-
         public static IEnumerable<object[]> SearchPrioritizationData = new List<object[]>
         {
             new object []
@@ -115,11 +108,11 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 .OrderBy(p => p.expectedRanking)
                 .ToArray();
 
-            var results = (await personRepository.SearchByNames(searchText)).ToArray();
+            var results = (await PersonRepository.SearchByNames(searchText)).ToArray();
 
             results.Length.ShouldBe(expectedPeople.Length,
                 testCaseDescription);
-            for(int i = 0; i < expectedPeople.Length; ++i)
+            for (int i = 0; i < expectedPeople.Length; ++i)
             {
                 var actual = results[i];
                 var expected = expectedPeople[i].person;
@@ -141,7 +134,10 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 return (person: person, expectedRanking: p.expectedRanking);
             }).Shuffle();
 
-            // TODO: insert people here
+            foreach (var personDetails in people)
+            {
+                PersonRepository.Save(personDetails.person);
+            }
 
             return Task.FromResult(people);
         }

@@ -8,11 +8,6 @@ namespace PeopleSearch.Core.Tests.DataGeneratorTests
 {
     public class GeneralTests
     {
-        private string[] GetPopulatedStringArray()
-        {
-            throw new NotImplementedException();
-        }
-
         [Fact]
         public void Random_returns_the_same_instance_the_second_time()
         {
@@ -52,7 +47,7 @@ namespace PeopleSearch.Core.Tests.DataGeneratorTests
         {
             var original = GetPopulatedStringArray();
             var shuffled = original.Shuffle();
-            shuffled.ShouldNotBe(original);
+            (shuffled == original).ShouldBeFalse();
         }
 
         [Fact]
@@ -82,6 +77,11 @@ namespace PeopleSearch.Core.Tests.DataGeneratorTests
             var original = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
             var shuffled = original.Shuffle().Distinct().ToArray();
             shuffled.Length.ShouldBe(original.Length);
+        }
+
+        private string[] GetPopulatedStringArray()
+        {
+            return MockData.MiddleNames;
         }
     }
 }

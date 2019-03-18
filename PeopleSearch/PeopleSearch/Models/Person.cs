@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PeopleSearch
 {
     public class Person
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long PersonId { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
