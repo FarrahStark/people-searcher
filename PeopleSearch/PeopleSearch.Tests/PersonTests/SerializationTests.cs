@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Xunit;
-using Moq;
+﻿using Newtonsoft.Json;
 using Shouldly;
+using Xunit;
 
-namespace PeopleSearch.Core.Tests.PersonTests
+namespace PeopleSearch.Tests.PersonTests
 {
     public class SerializationTests
     {

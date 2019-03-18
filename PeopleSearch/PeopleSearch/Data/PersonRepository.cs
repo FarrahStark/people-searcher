@@ -20,7 +20,7 @@ namespace PeopleSearch
             return new PersonContext(contextBuildOptions);
         }
 
-        public virtual Task<IEnumerable<Person>> SearchByNames(string searchText)
+        public virtual Task<IList<Person>> SearchByNames(string searchText)
         {
             throw new NotImplementedException();
         }

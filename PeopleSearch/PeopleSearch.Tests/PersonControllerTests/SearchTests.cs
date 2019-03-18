@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 using Moq;
-using Xunit;
 using Shouldly;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace PeopleSearch.Tests.PersonControllerTests
 {
@@ -16,12 +16,15 @@ namespace PeopleSearch.Tests.PersonControllerTests
 
         public SearchTests()
         {
-            personRepositoryMock = new Mock<PersonRepository>();
+            personRepositoryMock = new Mock<PersonRepository>(
+                new Mock<DbContextOptions<PersonContext>>().Object);
             personRepositoryMock
                 .Setup(r => r.Save(It.IsAny<Person>()))
+                .Returns(Task.FromResult(new Person()))
                 .Verifiable();
             personRepositoryMock
                 .Setup(r => r.SearchByNames(It.IsAny<string>()))
+                .Returns(Task.FromResult((IList<Person>)new List<Person>()))
                 .Verifiable();
 
             personRepository = personRepositoryMock.Object;
@@ -40,7 +43,7 @@ namespace PeopleSearch.Tests.PersonControllerTests
             var searchResults = await personController.Search(searchText, delayMilliseconds);
             var end = DateTime.UtcNow;
             var elapsed = (end - start).TotalMilliseconds;
-            var expectedDelay = delayMilliseconds * 1.0d;
+            var expectedDelay = (delayMilliseconds.HasValue ? delayMilliseconds.Value : 0) * 1.0d;
             (elapsed >= expectedDelay).ShouldBeTrue();
         }
 

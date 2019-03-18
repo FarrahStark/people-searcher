@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace PeopleSearch.Core.Tests.DataGeneratorTests
+namespace PeopleSearch.Tests.DataGeneratorTests
 {
     public class GeneralTests
     {
@@ -13,7 +13,7 @@ namespace PeopleSearch.Core.Tests.DataGeneratorTests
         {
             var expected = DataGenerator.Random;
             var actual = DataGenerator.Random;
-            expected.ShouldBe(actual);
+            (expected == actual).ShouldBeTrue();
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PeopleSearch
@@ -16,16 +17,21 @@ namespace PeopleSearch
 
         [AllowAnonymous]
         [HttpGet]
-        public Task<ActionResult> Search(string searchText, int? delayMilliseconds = null)
+        public async Task<IList<Person>> Search(string searchText, int? delayMilliseconds = null)
         {
-            throw new NotImplementedException();
+            if (delayMilliseconds.HasValue)
+            {
+                await Task.Delay(delayMilliseconds.Value);
+            }
+
+            return await personRepository.SearchByNames(searchText);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public Task<ActionResult> Save(Person person)
+        public Task<Person> Save(Person person)
         {
-            throw new NotImplementedException();
+            return personRepository.Save(person);
         }
     }
 }

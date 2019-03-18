@@ -3,7 +3,7 @@ using Shouldly;
 using System.Linq;
 using Xunit;
 
-namespace PeopleSearch.Core.Tests.DataGeneratorTests
+namespace PeopleSearch.Tests.DataGeneratorTests
 {
     public class GetDateInPast
     {
