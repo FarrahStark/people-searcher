@@ -6,6 +6,8 @@ namespace PeopleSearch.Tests.PersonTests
 {
     public class SerializationTests
     {
+        protected DataGenerator DataGenerator = new DataGenerator();
+
         [Fact]
         public void Person_can_be_serialized()
         {

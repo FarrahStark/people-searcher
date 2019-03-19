@@ -9,15 +9,22 @@ namespace PeopleSearch
     public class PersonRepository
     {
         private readonly DbContextOptions<PersonContext> contextBuildOptions;
+        private readonly DataGenerator dataGenerator;
+        private readonly PeopleSearchSettings settings;
 
-        public PersonRepository(DbContextOptions<PersonContext> contextBuildOptions)
+        public PersonRepository(
+            DbContextOptions<PersonContext> contextBuildOptions,
+            DataGenerator dataGenerator,
+            PeopleSearchSettings settings)
         {
             this.contextBuildOptions = contextBuildOptions;
+            this.dataGenerator = dataGenerator;
+            this.settings = settings;
         }
 
         private PersonContext GetContext()
         {
-            return new PersonContext(contextBuildOptions);
+            return new PersonContext(contextBuildOptions, dataGenerator, settings);
         }
 
         public virtual async Task<IList<Person>> SearchByNames(string searchText)

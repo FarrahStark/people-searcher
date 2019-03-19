@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace PeopleSearch
 {
@@ -14,7 +10,17 @@ namespace PeopleSearch
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+            using (var serviceScope = host.Services.CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetRequiredService<PersonContext>())
+                {
+                    Console.WriteLine("Running Database Migrations");
+                    context.Database.Migrate();
+                    Console.WriteLine("Database Migration Complete");
+                }
+            }
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

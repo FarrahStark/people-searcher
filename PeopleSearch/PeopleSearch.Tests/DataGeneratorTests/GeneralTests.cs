@@ -8,6 +8,8 @@ namespace PeopleSearch.Tests.DataGeneratorTests
 {
     public class GeneralTests
     {
+        DataGenerator DataGenerator = new DataGenerator();
+
         [Fact]
         public void Random_returns_the_same_instance_the_second_time()
         {

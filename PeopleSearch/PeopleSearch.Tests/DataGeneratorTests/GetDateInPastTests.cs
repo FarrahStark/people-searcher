@@ -7,6 +7,8 @@ namespace PeopleSearch.Tests.DataGeneratorTests
 {
     public class GetDateInPast
     {
+        DataGenerator DataGenerator = new DataGenerator();
+
         [Fact]
         public void Returns_a_past_date()
         {

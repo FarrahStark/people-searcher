@@ -11,15 +11,19 @@ namespace PeopleSearch
     public class Startup
     {
         private const string DefaultDbConnection = "PeopleSearch";
+        private readonly PeopleSearchSettings settings;
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            settings = BuildSettings(configuration);
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(settings);
+            services.AddSingleton(new DataGenerator());
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSpaStaticFiles(configuration =>
             {
@@ -30,6 +34,7 @@ namespace PeopleSearch
                 .GetSection("ConnectionStrings")
                 .GetValue<string>(DefaultDbConnection);
             services.AddDbContext<PersonContext>(options => options.UseSqlServer(connection));
+            services.AddSingleton<PersonRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -37,11 +42,6 @@ namespace PeopleSearch
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-                {
-                    var context = serviceScope.ServiceProvider.GetRequiredService<PersonContext>();
-                    context.Database.Migrate();
-                }
             }
             else
             {
@@ -68,6 +68,13 @@ namespace PeopleSearch
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+        }
+
+        private static PeopleSearchSettings BuildSettings(IConfiguration configuration)
+        {
+            var settings = new PeopleSearchSettings();
+            configuration.Bind("PeopleSearchSettings", settings);
+            return settings;
         }
     }
 }

@@ -2,19 +2,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace PeopleSearch
 {
-    public static class DataGenerator
+    public class DataGenerator
     {
         public const int InitialId = 0;
         private static Lazy<Random> _random = new Lazy<Random>(() => new Random());
         public static Random Random => _random.Value;
 
         private static long _nextPersonId = InitialId;
-        public static long NextPersonId => _nextPersonId++;
+        public long NextPersonId
+        {
+            get
+            {
+                Interlocked.Increment(ref _nextPersonId);
+                return _nextPersonId;
+            }
+        }
 
-        public static IEnumerable<Person> GetPeople(int count = 5)
+        private static long _nextAddressId = InitialId;
+        public long NextAddressId
+        {
+            get
+            {
+                Interlocked.Increment(ref _nextAddressId);
+                return _nextAddressId;
+            }
+        }
+
+        public IEnumerable<Person> GetPeople(int count)
         {
             for (int i = 0; i < count; ++i)
             {
@@ -22,10 +40,26 @@ namespace PeopleSearch
             }
         }
 
-        public static Person GetPerson()
+        public (IList<Person> People, IList<Address> Addresses) GetPeopleAndAdresses(int count)
+        {
+            var people = new List<Person>(count);
+            var addresses = new List<Address>(count);
+            for (int i = 0; i < count; ++i)
+            {
+                var person = GetPerson(ignoreAddress: true);
+                var address = GetAddress();
+                address.PersonId = person.PersonId;
+                people.Add(person);
+                addresses.Add(address);
+            }
+            return (people, addresses);
+        }
+
+        public Person GetPerson(bool ignoreAddress = false)
         {
             var person = new Person
             {
+                PersonId = NextPersonId,
                 FirstName = MockData.FirstNames.RandomItem(),
                 LastName = MockData.LastNames.RandomItem(),
                 DateOfBirthUtc = GetDateInPast(),
@@ -33,15 +67,21 @@ namespace PeopleSearch
                 ProfileImage = MockData.ProfileImages.RandomItem()
             };
             person.MiddleName = GetMiddleName(person.FirstName, person.LastName);
-            person.Address = GetAddress();
-            person.Address.Person = person;
+            if (!ignoreAddress)
+            {
+                person.Address = GetAddress();
+                person.Address.Person = person;
+                person.Address.PersonId = person.PersonId;
+                person.Address.Person = person;
+            }
             return person;
         }
 
-        public static Address GetAddress()
+        public Address GetAddress()
         {
             return new Address()
             {
+                AddressId = NextAddressId,
                 Line1 = GetStreetAddress(),
                 Line2 = GetAddressLine2(),
                 City = MockData.Cities.RandomItem(),
@@ -51,12 +91,12 @@ namespace PeopleSearch
             };
         }
 
-        public static string GetPostalCode()
+        public string GetPostalCode()
         {
             return Random.Next(11111, 98111).ToString();
         }
 
-        public static string GetAddressLine2()
+        public string GetAddressLine2()
         {
             if (Random.Choice() && Random.Choice())
             {
@@ -66,7 +106,7 @@ namespace PeopleSearch
             return string.Empty;
         }
 
-        public static string GetStreetAddress()
+        public string GetStreetAddress()
         {
             var streetComponents = new List<string>();
             streetComponents.Add(Random.Next(100, 9999).ToString());
@@ -80,47 +120,14 @@ namespace PeopleSearch
             return string.Join(" ", streetComponents);
         }
 
-        public static bool Choice(this Random random)
-        {
-            return random.Next(0, 2) == 0;
-        }
-
-        public static T RandomItem<T>(this T[] items)
-        {
-            var index = Random.Next(0, items.Length);
-            return items[index];
-        }
-
-        public static T[] RandomSubset<T>(this T[] items)
-        {
-            int count = Random.Next(0, items.Length);
-            return items.Shuffle().Take(count).ToArray();
-        }
-
-        public static T[] Shuffle<T>(this IEnumerable<T> items)
-        {
-            var itemsArray = items.ToArray();
-            var shuffled = new T[itemsArray.Length];
-            Array.Copy(itemsArray, shuffled, itemsArray.Length);
-            for (int i = 0; i < itemsArray.Length; ++i)
-            {
-                var j = Random.Next(i, itemsArray.Length);
-                var temp = shuffled[i];
-                shuffled[i] = shuffled[j];
-                shuffled[j] = temp;
-            }
-
-            return shuffled;
-        }
-
-        public static DateTime GetDateInPast()
+        public DateTime GetDateInPast()
         {
             const int centuryInDays = 36525;
             var ageSpan = TimeSpan.FromDays(Random.Next(1, centuryInDays));
             return DateTime.Today.ToUniversalTime() - ageSpan;
         }
 
-        public static string GetMiddleName(string firstName, string lastName)
+        public string GetMiddleName(string firstName, string lastName)
         {
             string middleName;
             do
@@ -131,7 +138,7 @@ namespace PeopleSearch
             return middleName;
         }
 
-        public static string[] GetInterests()
+        public string[] GetInterests()
         {
             return MockData.Interests.RandomSubset();
         }

@@ -17,7 +17,9 @@ namespace PeopleSearch.Tests.PersonControllerTests
         public SearchTests()
         {
             personRepositoryMock = new Mock<PersonRepository>(
-                new Mock<DbContextOptions<PersonContext>>().Object);
+                new Mock<DbContextOptions<PersonContext>>().Object,
+                new Mock<DataGenerator>().Object,
+                new PeopleSearchSettings());
             personRepositoryMock
                 .Setup(r => r.Save(It.IsAny<Person>()))
                 .Returns(Task.FromResult(new Person()))
