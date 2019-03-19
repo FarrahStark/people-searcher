@@ -20,14 +20,30 @@ namespace PeopleSearch
             return new PersonContext(contextBuildOptions);
         }
 
-        public virtual Task<IList<Person>> SearchByNames(string searchText)
+        public virtual async Task<IList<Person>> SearchByNames(string searchText)
         {
-            throw new NotImplementedException();
+            var nameFragments = searchText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            using (var context = GetContext())
+            {
+                var people = await context.People
+                    .Where(x => nameFragments.Any(n =>
+                        x.FirstName.Contains(n) ||
+                        x.LastName.Contains(n) ||
+                        x.MiddleName.Contains(n)))
+                    .Include(x => x.Address)
+                    .ToListAsync();
+                return people;
+            }
         }
 
-        public virtual Task<Person> Save(Person personToSave)
+        public virtual async Task<Person> Save(Person personToSave)
         {
-            throw new NotImplementedException();
+            using(var context = GetContext())
+            {
+                await context.AddAsync(personToSave);
+                await context.SaveChangesAsync();
+                return personToSave;
+            }
         }
     }
 }

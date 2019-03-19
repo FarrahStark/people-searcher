@@ -9,7 +9,7 @@ namespace PeopleSearch.Tests
     {
         protected readonly PersonRepository PersonRepository =
             new PersonRepository(new DbContextOptionsBuilder<PersonContext>()
-                .UseInMemoryDatabase(databaseName: "PeopleSearchDb")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options);
     }
 }

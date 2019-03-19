@@ -19,7 +19,14 @@ namespace PeopleSearch
         {
             get
             {
-                throw new NotImplementedException();
+                var today = UtcToday;
+                var age = today.Year - DateOfBirthUtc.Year;
+                if (DateOfBirthUtc > today.AddYears(-1 * age))
+                {
+                    --age;
+                }
+
+                return age;
             }
         }
 
@@ -31,9 +38,19 @@ namespace PeopleSearch
         [JsonIgnore]
         public virtual string InterestsJson
         {
-            get { throw new NotImplementedException(); }
+            get { return JsonConvert.SerializeObject(Interests ?? new string[0]); }
 
-            set { throw new NotImplementedException(); }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    Interests = new string[0];
+                }
+                else
+                {
+                    Interests = JsonConvert.DeserializeObject<List<string>>(value);
+                }
+            }
         }
     }
 }
