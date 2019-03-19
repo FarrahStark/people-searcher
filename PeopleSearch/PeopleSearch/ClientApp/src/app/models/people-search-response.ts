@@ -1,4 +1,4 @@
 ﻿import { Person } from './person';
 export interface PeopleSearchResponse {
-    MatchingPeople: Person[];
+    matchingPeople: Person[];
 }

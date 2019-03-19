@@ -17,14 +17,15 @@ namespace PeopleSearch
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IList<Person>> Search(string searchText, int? delayMilliseconds = null)
+        public async Task<object> Search(string searchText, int? delayMilliseconds = null)
         {
             if (delayMilliseconds.HasValue)
             {
                 await Task.Delay(delayMilliseconds.Value);
             }
 
-            return await personRepository.SearchByNames(searchText);
+            var people = await personRepository.SearchByNames(searchText);
+            return new { MatchingPeople = people };
         }
 
         [AllowAnonymous]

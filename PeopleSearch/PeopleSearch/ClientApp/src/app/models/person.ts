@@ -1,12 +1,13 @@
-﻿import { Address } from './address'
+﻿import { Address } from './address';
 
 export interface Person {
-    PersonId: number;
-    FirstName: string;
-    MiddleName: string;
-    LastName: string;
-    ProfileImage: string;
-    DateOfBirthUtc: string;
-    Address: Address;
-    Interests: string[];
+    personId: number;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    profileImage: string;
+    dateOfBirthUtc: string;
+    age: number;
+    address: Address;
+    interests: string[];
 }

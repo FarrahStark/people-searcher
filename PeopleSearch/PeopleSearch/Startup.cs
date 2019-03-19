@@ -34,7 +34,7 @@ namespace PeopleSearch
                 .GetSection("ConnectionStrings")
                 .GetValue<string>(DefaultDbConnection);
             services.AddDbContext<PersonContext>(options => options.UseSqlServer(connection));
-            services.AddSingleton<PersonRepository>();
+            services.AddScoped<PersonRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
