@@ -42,7 +42,7 @@ namespace PeopleSearch.Tests.PersonControllerTests
         {
             var start = DateTime.UtcNow;
             var searchText = "John J. Jingleheimerschmidt";
-            var searchResults = await personController.Search(searchText, delayMilliseconds);
+            var searchResults = await personController.Search(searchText, delayMilliseconds: delayMilliseconds);
             var end = DateTime.UtcNow;
             var elapsed = (end - start).TotalMilliseconds;
             var expectedDelay = (delayMilliseconds.HasValue ? delayMilliseconds.Value : 0) * 1.0d;

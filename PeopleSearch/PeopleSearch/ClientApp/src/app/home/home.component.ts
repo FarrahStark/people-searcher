@@ -8,6 +8,7 @@ import { Person, PeopleSearchResponse } from '../models';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   displayedColumns = ['first', 'middle', 'last', 'age'];
@@ -15,6 +16,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   isSearching = false;
   selectedPerson?: Person;
   searchResults: Person[] = [];
+  searched = false;
+  get noResults() {
+    return this.searchResults.length < 1 && this.searched;
+  }
 
   private getSearchResultsSubscription?: Subscription;
 
@@ -26,8 +31,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     const getSearchResultsPromo = this.searchBox.valueChanges
       .pipe(
         debounce(() => timer(400)),
-        tap(() => this.isSearching = true),
-        tap(() => this.selectedPerson = undefined),
+        tap(() => {
+          this.isSearching = true;
+          this.selectedPerson = undefined;
+          this.searchResults = [];
+          this.searched = true;
+        }),
         switchMap(() => {
           const searchText = this.searchBox.value;
           return this.personRepository.runSearch(searchText, 100);
@@ -39,7 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       this. getSearchResultsSubscription = getSearchResultsPromo.subscribe(
       (searchResults: PeopleSearchResponse) => {
-        this.searchResults = searchResults.MatchingPeople;
+        this.searchResults = searchResults.matchingPeople;
       });
   }
 

@@ -1,0 +1,9 @@
+.search-results {
+  width: 100%;
+  transition: height 0.5s ease-out;
+}
+
+.no-results {
+  text-align: center;
+  padding: 8px;
+}

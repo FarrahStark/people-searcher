@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PeopleSearch
@@ -17,7 +18,7 @@ namespace PeopleSearch
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<object> Search(string searchText, int? delayMilliseconds = null)
+        public async Task<object> Search(string searchText, int takeCount = 100, int? delayMilliseconds = null)
         {
             if (delayMilliseconds.HasValue)
             {
@@ -25,7 +26,7 @@ namespace PeopleSearch
             }
 
             var people = await personRepository.SearchByNames(searchText);
-            return new { MatchingPeople = people };
+            return new { MatchingPeople = people.Take(takeCount) };
         }
 
         [AllowAnonymous]
