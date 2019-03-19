@@ -58,7 +58,7 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 people: new PersonInfo[]
                 {
                     new PersonInfo("First", "Jade", "Janeway", 1),
-                    new PersonInfo("Henry", "Middle", "Last", 2)
+                    new PersonInfo("Henry", "Salse", "Last", 2)
                 }
             );
 

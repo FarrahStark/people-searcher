@@ -8,8 +8,9 @@ namespace PeopleSearch
     public static class DataGenerator
     {
         public const int InitialId = 0;
-        private static Random _random;
-        public static Random Random => _random ?? (_random = new Random());
+        private static Lazy<Random> _random = new Lazy<Random>(() => new Random());
+        public static Random Random => _random.Value;
+
         private static long _nextPersonId = InitialId;
         public static long NextPersonId => _nextPersonId++;
 
