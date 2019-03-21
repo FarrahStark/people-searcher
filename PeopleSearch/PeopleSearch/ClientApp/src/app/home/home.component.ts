@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormControl, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
 import { debounce, map, tap, switchMap, publish, refCount, skipWhile, withLatestFrom, startWith } from 'rxjs/operators';
 import { timer, Subscription, combineLatest } from 'rxjs';
@@ -21,6 +21,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   selectedPerson?: Person;
   searchResults: Person[] = [];
   searched = false;
+  private screenWidth: number = 0;
+  private screenHeight: number = 0;
+  get isMobile(): boolean {
+    return this.screenWidth <= 768;
+  }
+
+  get drawerMode(): string {
+    return this.isMobile ? 'side' : 'side';
+  }
+
+  get showDetails(): boolean {
+    return this.selectedPerson !== undefined;
+  }
   get noResults() {
     return this.searchResults.length < 1 && this.searched;
   }
@@ -79,12 +92,31 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+      this.screenWidth = window.innerWidth;
+      this.screenHeight = window.innerHeight;
+  }
 
+  personSelected(person: Person) {
+    this.deselectPerson();
+    setTimeout(() => {
+      this.selectedPerson = person;
+    });
+  }
+
+  deselectPerson() {
+    this.selectedPerson = undefined;
+  }
+
+  isValidSearchText(text: string): boolean {
+    const validSearchRegex = /^\s*(?:[a-zA-Z]+\s+){1,2}[a-zA-Z]+\s*$/g;
+    return validSearchRegex.test(text);
+  }
 
   isValidSearch(text: string): boolean {
     const delay = this.delayInput.value;
-    const validSearchRegex = /^\s*(?:[a-zA-Z]+\s+){1,2}[a-zA-Z]+\s*$/g;
-    return validSearchRegex.test(text) &&
+    return this.isValidSearchText(text) &&
       delay >= this.delayMin &&
       delay <= this.delayMax;
   }
@@ -96,8 +128,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         return invalid;
       }
 
+      const blankStringRegex = /^\s*$/;
+
       const searchText = control.value;
-      const isValid = this.isValidSearch(searchText);
+      const isValid = this.isValidSearchText(searchText) ||
+        blankStringRegex.test(searchText);
       return isValid ? null : invalid;
     };
   }

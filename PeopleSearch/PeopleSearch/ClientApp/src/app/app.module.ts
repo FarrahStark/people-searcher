@@ -14,11 +14,15 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatProgressBarModule,
-  MatIconModule
+  MatIconModule,
+  MatTooltipModule,
+  MatSidenavModule,
+  MatButtonModule
 } from '@angular/material';
 import { CommonModule } from '@angular/common';
 import { PersonRepositoryService } from './services/person-repository.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import 'hammerjs';
 
 @NgModule({
   declarations: [
@@ -40,6 +44,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatInputModule,
     MatProgressBarModule,
     MatIconModule,
+    MatTooltipModule,
+    MatSidenavModule,
+    MatButtonModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'add-people', component: AddPeopleComponent },

@@ -9,6 +9,7 @@
 }
 
 .search-options {
+  margin-top: 80px;
   display: flex;
   justify-content: center;
   margin-bottom: 32px;
@@ -29,4 +30,55 @@
 
 .no-wrap {
   white-space: nowrap;
+}
+
+.selected-item {
+  background: rgb(200, 152, 219);
+}
+
+.selectable-item {
+  cursor: pointer;
+}
+
+.mat-drawer-container ::ng-deep {
+  background: none;
+}
+
+.search-results {
+  overflow: auto;
+}
+
+.search-section {
+  transition: all 0.5s ease-out;
+}
+
+@media only screen and (max-width: 600px) {
+  .search-options {
+    margin-top: 8px;
+    margin-bottom: 20px;
+    justify-content: initial;
+  }
+  .search-box {
+    flex-basis: initial;
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  .search-section.drawer-open {
+    height: 100%;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+  .details-section {
+    height: 100%;
+    width: 100%;
+  }
+
+  .side-nav-container {
+    position: relative;
+  }
+
+  mat-sidenav-container.side-nav-container ::ng-deep mat-sidenav {
+    width: 100%;
+  }
 }
