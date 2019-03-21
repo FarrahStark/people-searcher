@@ -7,3 +7,26 @@
   text-align: center;
   padding: 8px;
 }
+
+.search-options {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.search-box {
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: 300px;
+  margin-right: 8px;
+}
+
+.delay-input {
+  flex-shrink: 0;
+  flex-grow: 0;
+  max-width: 74px;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}

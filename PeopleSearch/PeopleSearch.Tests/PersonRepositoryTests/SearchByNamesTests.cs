@@ -8,23 +8,19 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
     public class SearchByNamesTests : InMemoryDatabaseTest
     {
         [Fact]
-        public async Task The_results_are_returned_in_the_correct_order()
+        public async Task Records_without_2_matches_are_ignored()
         {
             var testCase = new TestCaseInfo
             (
-                testCaseDetails: "Search results are in the correct order",
+                testCaseDetails: "Records without at 2 matches are ignored",
                 searchText: "First Middle Last",
                 people: new PersonInfo[]
                 {
-                    new PersonInfo("First", "Middle", "Last", 1), // best match wins
-                    new PersonInfo("First", "Jade", "Last", 2), // correct last name beats correct middle name
-                    new PersonInfo("First", "Middle", "Jefferson", 3), // 2 name matches beats 1 name match
-                    new PersonInfo("First", "Jose", "Jefferson", 4), // correct first name beats correct last name
-                    new PersonInfo("Holly", "Hilda", "Last", 5), // correct last name beats correct middle name
-                    new PersonInfo("Sara", "Middle", "Graph", 6), // exact match beats partial match
-                    new PersonInfo("Monster", "Middleton", "Frankenstein", 7), // partial matches are returned
-                    new PersonInfo("Sally", "Josephine", "Jefferson", (int?)null), // no match doesn't return
-                    new PersonInfo("Jake", "The", "Snake", (int?)null) // no match doesn't return
+                    new PersonInfo("First", "Middleton", "Last", 1),
+                    new PersonInfo("Firstish", "Middleton", "jasfdlkjaf", 2),
+                    new PersonInfo("First", "asdf", "asdfafs", null),
+                    new PersonInfo("asfasf", "Middle", "asdfafs", null),
+                    new PersonInfo("asdf", "asdf", "Last", null),
                 }
             );
 
@@ -40,8 +36,8 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 searchText: "First Middle Last",
                 people: new PersonInfo[]
                 {
-                    new PersonInfo("First", "Jade", "Janeway", 1),
-                    new PersonInfo("Henry", "Middle", "Jefferson", 2)
+                    new PersonInfo("First", "Jade", "Last", 1),
+                    new PersonInfo("Henry", "Middle", "Last", 2)
                 }
             );
 
@@ -57,8 +53,8 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 searchText: "First Middle Last",
                 people: new PersonInfo[]
                 {
-                    new PersonInfo("First", "Jade", "Janeway", 1),
-                    new PersonInfo("Henry", "Salse", "Last", 2)
+                    new PersonInfo("First", "Middle", "Janeway", 1),
+                    new PersonInfo("Henry", "Middle", "Last", 2)
                 }
             );
 
@@ -74,8 +70,8 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 searchText: "First Middle Last",
                 people: new PersonInfo[]
                 {
-                    new PersonInfo("Jim", "Jade", "Last", 1),
-                    new PersonInfo("Henry", "Middle", "Jefferson", 2)
+                    new PersonInfo("First", "Jade", "Last", 1),
+                    new PersonInfo("First", "Middle", "Jefferson", 2)
                 }
             );
 
@@ -91,8 +87,8 @@ namespace PeopleSearch.Tests.PersonRepositoryTests
                 searchText: "First Middle Last",
                 people: new PersonInfo[]
                 {
-                    new PersonInfo("Jim", "Middle", "Starkiller", 1),
-                    new PersonInfo("Henry", "Middleton", "Jefferson", 2)
+                    new PersonInfo("First", "Middle", "Last", 1),
+                    new PersonInfo("First", "Middleton", "Last", 2)
                 }
             );
 

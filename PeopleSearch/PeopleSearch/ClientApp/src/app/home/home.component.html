@@ -1,13 +1,26 @@
 <h1>People Search</h1>
 
-<mat-form-field>
-  <input [formControl]="searchBox"
-    type="text"
-    matInput
-    placeholder="Type to Search"
-    matTooltip="Enter a person's full name here to search"/>
-  <mat-error>Invalid Search</mat-error>
-</mat-form-field>
+<div class="search-options">
+  <mat-form-field class="search-box">
+    <input [formControl]="searchBox"
+      type="text"
+      class="search-box"
+      matInput
+      placeholder="Type to Search"
+      matTooltip="Enter a person's full name here to search"/>
+    <mat-error>First, last, and/or middle name required. Alphabetic characters only.</mat-error>
+  </mat-form-field>
+  <mat-form-field class="delay-input">
+    <input [formControl]="delayInput"
+        type="number"
+        min="{delayMin}"
+        max="{delayMax}"
+        matInput
+        placeholder="Delay"
+        matTooltip="Enter a simulated delay time in milliseconds"/>
+        <mat-error>Must be <wbr/> <span class="no-wrap">{{delayMin}}-{{delayMax}}ms</span></mat-error>
+  </mat-form-field>
+</div>
 
 <section class="mat-elevation-z8">
   <mat-progress-bar *ngIf="isSearching" [mode]="'indeterminate'" ></mat-progress-bar>

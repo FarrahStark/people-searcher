@@ -27,6 +27,16 @@ namespace PeopleSearch
             return new PersonContext(contextBuildOptions, dataGenerator, settings);
         }
 
+        public virtual async Task<Person> Save(Person personToSave)
+        {
+            using (var context = GetContext())
+            {
+                await context.AddAsync(personToSave);
+                await context.SaveChangesAsync();
+                return personToSave;
+            }
+        }
+
         public virtual async Task<IList<Person>> SearchByNames(string searchText)
         {
             if (string.IsNullOrWhiteSpace(searchText))
@@ -35,27 +45,79 @@ namespace PeopleSearch
             }
 
             var searchTerms = searchText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => normalize(s))
+                .Select(s => Normalize(s))
                 .ToList();
 
-            var first = searchTerms.FirstOrDefault();
-            var last = searchTerms.LastOrDefault();
-            var middleNames = new List<string>();
-            for (int i = 1; i < searchTerms.Count - 1 && searchTerms.Count > 2; ++i)
+            if(searchTerms.Count < 2 || searchTerms.Count > 3)
             {
-                middleNames.Add(searchTerms[i]);
+                throw new Exception("This search only supports 2-3 search terms");
+            }
+
+            var first = Normalize(searchTerms.First());
+            var last = Normalize(searchTerms.Last());
+            string middle;
+            if (searchTerms.Count == 3)
+            {
+                middle = Normalize(searchTerms[1]);
+            }
+            else
+            {
+                middle = last; // we don't know if the search term is just an unfinished full name or first and last
+            }
+
+            var firstPoints = 24;
+            var middlePoints = 20;
+            var lastPoints = 22;
+
+            var matchPoints = firstPoints / 2;
+            var penalty = (-1 * matchPoints) + 1;
+
+            var weight = 1;
+            if (last == middle)
+            {
+                // don't award points twice for the same match
+                weight = 2;
+            }
+
+            (Person person, int score) GetSearchScore(Person unNormalizedPerson)
+            {
+                var person = Normalize(unNormalizedPerson);
+                int score = 0;
+                var firstIsMatch = person.FirstName.Contains(first);
+                var lastIsMatch = person.LastName.Contains(last);
+                var middleIsMatch = person.MiddleName.Contains(middle);
+                var matchCount =
+                    (firstIsMatch ? 1 : 0) +
+                    (lastIsMatch ? 1 : 0) +
+                    (middleIsMatch ? 1 : 0);
+                if (matchCount < 2)
+                {
+                    return (unNormalizedPerson, score);
+                }
+
+                score += firstIsMatch ? matchPoints : penalty;
+                score += person.FirstName == first ? firstPoints : 0;
+
+                score += lastIsMatch ? matchPoints : penalty / weight;
+                score += person.LastName == last ? lastPoints / weight : 0;
+
+                score += middleIsMatch ? matchPoints : penalty / weight;
+                score += person.MiddleName == middle ? middlePoints / weight : 0;
+
+                return (unNormalizedPerson, score);
             }
 
             using (var context = GetContext())
             {
                 var people = (await context.People
-                    .Where(x => searchTerms.Any(n =>
-                        EF.Functions.Like(x.FirstName, $"%{n}%") ||
-                        EF.Functions.Like(x.LastName, $"%{n}%") ||
-                        EF.Functions.Like(x.MiddleName, $"%{n}%")))
+                    .Where(x =>
+                        EF.Functions.Like(x.FirstName, $"%{first}%") ||
+                        EF.Functions.Like(x.LastName, $"%{last}%") ||
+                        EF.Functions.Like(x.MiddleName, $"%{middle}%"))
                     .Include(x => x.Address)
                     .ToListAsync())
-                    .Select(p => GetSearchScore(first, last, middleNames, searchTerms, p))
+                    .Select(p => GetSearchScore(p))
+                    .Where(p => p.score > 0)
                     .OrderByDescending(p => p.score)
                     .Select(p => p.person)
                     .ToList();
@@ -63,85 +125,7 @@ namespace PeopleSearch
             }
         }
 
-        public virtual async Task<Person> Save(Person personToSave)
-        {
-            using(var context = GetContext())
-            {
-                await context.AddAsync(personToSave);
-                await context.SaveChangesAsync();
-                return personToSave;
-            }
-        }
-
-        private (Person person, int score) GetSearchScore(
-                string searchFirstName,
-                string searchLastName,
-                List<string> searchMiddleNames,
-                List<string> searchTermList,
-                Person person)
-        {
-            var normalizedPersonFirst = normalize(person.FirstName);
-            var normalizedPersonMiddle = normalize(person.MiddleName);
-            var normalizedPersonLast = normalize(person.LastName);
-            int score = 0;
-            int increment = searchMiddleNames.Count;
-            if (searchTermList.Any(s => normalizedPersonFirst.Contains(s)) ||
-                searchTermList.Any(s => normalizedPersonMiddle.Contains(s)) ||
-                searchTermList.Any(s => normalizedPersonLast.Contains(s)))
-            {
-                score += increment;
-            }
-            else
-            {
-                return (person, score);
-            }
-
-            if (searchTermList.Any(s => normalizedPersonFirst == s) ||
-                searchTermList.Any(s => normalizedPersonMiddle == s) ||
-                searchTermList.Any(s => normalizedPersonLast == s))
-            {
-                score += (increment + 1);
-            }
-            else
-            {
-                return (person, score);
-            }
-
-            if (normalizedPersonFirst.Contains(searchFirstName))
-            {
-                score += (increment + 2);
-                if (normalizedPersonFirst == searchFirstName)
-                {
-                    score += 1;
-                }
-            }
-
-            if (normalizedPersonLast.Contains(searchLastName))
-            {
-                score += (increment + 1);
-                if (normalizedPersonLast == searchLastName)
-                {
-                    score += 1;
-                }
-            }
-
-            if (normalizedPersonMiddle.Contains(searchLastName))
-            {
-                score += (increment + 1);
-            }
-
-            foreach (var middle in searchMiddleNames)
-            {
-                if (normalizedPersonMiddle.Contains(middle))
-                {
-                    score += 1;
-                }
-            }
-
-            return (person, score);
-        }
-
-        private string normalize(string value)
+        private string Normalize(string value)
         {
             if (value == null)
             {
@@ -149,6 +133,16 @@ namespace PeopleSearch
             }
 
             return value.Trim().ToLowerInvariant();
+        }
+
+        private Person Normalize(Person person)
+        {
+            return new Person
+            {
+                FirstName = Normalize(person.FirstName),
+                MiddleName = Normalize(person.MiddleName),
+                LastName = Normalize(person.LastName),
+            };
         }
     }
 }
