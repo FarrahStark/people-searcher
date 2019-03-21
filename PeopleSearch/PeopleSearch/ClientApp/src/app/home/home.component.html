@@ -2,12 +2,13 @@
   <mat-sidenav [opened]="showDetails" [mode]="drawerMode" position="end">
     <section *ngIf="showDetails" class="details-section">
       <button
-        mat-icon-button
+        mat-button
         type="button"
+        matTooltip="Close Details"
         (click)="deselectPerson()">
         <mat-icon>arrow_back_ios</mat-icon>
+        {{selectedPerson.firstName}}
       </button>
-      {{selectedPerson.firstName}}
     </section>
   </mat-sidenav>
   <mat-sidenav-content>

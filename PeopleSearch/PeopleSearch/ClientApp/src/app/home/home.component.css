@@ -52,6 +52,10 @@
   transition: all 0.5s ease-out;
 }
 
+.details-section {
+  padding: 8px;
+}
+
 @media only screen and (max-width: 600px) {
   .search-options {
     margin-top: 8px;
@@ -72,6 +76,7 @@
   .details-section {
     height: 100%;
     width: 100%;
+    padding: 0;
   }
 
   .side-nav-container {
