@@ -1,0 +1,30 @@
+<section *ngIf="person !== undefined" class="person-profile-container">
+  <div class="summary">
+    <div class="profile-pic-wrapper">
+      <img [attr.src]="person.profileImage"
+        [attr.alt]="person.firstName + ' ' + person.lastName"
+        class="profile-pic"/>
+    </div>
+    <h3 class="person-name">{{person.firstName}} {{person.lastName}}</h3>
+    <div class="age">Age {{person.age}}</div>
+  </div>
+  <div class="details">
+    <h4 *ngIf="person.interests.length > 0">Interests</h4>
+    <ul>
+      <li *ngFor="let interest of person.interests">
+        {{ interest }}<wbr/>
+      </li>
+    </ul>
+    <h4>Address</h4>
+    <div class="address">
+      <div>{{person.address.line1}}</div>
+      <div *ngIf="person.address.line2">{{person.address.line2}}</div>
+      <div>
+        <span>{{person.address.city}},</span>
+        <span>{{person.address.state}}</span>
+        <span>{{person.address.postalCode}}</span>
+      </div>
+      <div>{{person.address.country}}</div>
+    </div>
+  </div>
+</section>

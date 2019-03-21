@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { AddPeopleComponent } from './add-people/add-people.component';
+import { PersonDetailsComponent } from './person-details/person-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   MatCardModule,
@@ -21,6 +22,7 @@ import {
 } from '@angular/material';
 import { CommonModule } from '@angular/common';
 import { PersonRepositoryService } from './services/person-repository.service';
+import { DrawerService } from './services/drawer.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
 
@@ -29,7 +31,8 @@ import 'hammerjs';
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    AddPeopleComponent
+    AddPeopleComponent,
+    PersonDetailsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -52,7 +55,10 @@ import 'hammerjs';
       { path: 'add-people', component: AddPeopleComponent },
     ])
   ],
-  providers: [PersonRepositoryService],
+  providers: [
+    PersonRepositoryService,
+    DrawerService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

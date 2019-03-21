@@ -6,7 +6,6 @@ export interface Person {
     middleName: string;
     lastName: string;
     profileImage: string;
-    dateOfBirthUtc: string;
     age: number;
     address: Address;
     interests: string[];

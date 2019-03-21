@@ -5,6 +5,7 @@ import { timer, Subscription, combineLatest } from 'rxjs';
 import { PersonRepositoryService } from '../services/person-repository.service';
 import { Person, PeopleSearchResponse } from '../models';
 import { skipIf } from '../operators';
+import { DrawerService } from '../services/drawer.service';
 
 @Component({
   selector: 'app-home',
@@ -35,12 +36,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.selectedPerson !== undefined;
   }
   get noResults() {
-    return this.searchResults.length < 1 && this.searched;
+    return this.searchResults.length < 1 && this.searched && !this.searchBox;
   }
 
   private getSearchResultsSubscription?: Subscription;
 
-  constructor(private personRepository: PersonRepositoryService) {
+  constructor(
+    private personRepository: PersonRepositoryService,
+    public drawerService: DrawerService) {
   }
 
   ngOnInit(): void {
@@ -102,11 +105,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.deselectPerson();
     setTimeout(() => {
       this.selectedPerson = person;
+      this.drawerService.isOpen = true;
     });
   }
 
   deselectPerson() {
     this.selectedPerson = undefined;
+    this.drawerService.isOpen = false;
   }
 
   isValidSearchText(text: string): boolean {

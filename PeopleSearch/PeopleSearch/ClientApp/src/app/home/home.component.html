@@ -1,5 +1,5 @@
 <mat-sidenav-container class="side-nav-container">
-  <mat-sidenav [opened]="showDetails" [mode]="drawerMode" position="end">
+  <mat-sidenav [opened]="showDetails" [mode]="drawerMode" position="end" class="details-section-wrapper">
     <section *ngIf="showDetails" class="details-section">
       <button
         mat-button
@@ -7,8 +7,9 @@
         matTooltip="Close Details"
         (click)="deselectPerson()">
         <mat-icon>arrow_back_ios</mat-icon>
-        {{selectedPerson.firstName}}
+        Return to Search
       </button>
+      <app-person-details [person]="selectedPerson"></app-person-details>
     </section>
   </mat-sidenav>
   <mat-sidenav-content>

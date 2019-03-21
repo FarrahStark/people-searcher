@@ -1,0 +1,84 @@
+.profile-pic {
+  clip-path: ellipse(50% 50% at 50% 50%);
+  width: 30vmin;
+  height: 30vmin;
+  object-fit: contain;
+}
+
+.profile-pic-wrapper {
+  height: 30vmin;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 40px 40px 40px;
+  padding: 0;
+  filter: drop-shadow(0 0 4px rgba(0,0,0, 0.7));
+}
+
+.address {
+  white-space: normal;
+}
+
+.person-profile-container {
+  text-align: center;
+}
+
+ul {
+  margin: 0 auto;
+  max-width: 33vmax;
+  padding-inline-start: 0;
+}
+
+li {
+  display: inline-block;
+  list-style-type: none;
+  word-wrap: break-word;
+  white-space: pre;
+}
+li:after { content: ", "; }
+li:last-child:after { content: "."; display: none; }
+
+.age {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+h4 {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 1rem;
+}
+
+h4:first-of-type {
+  margin-top: 0;
+}
+
+@media only screen and (max-width: 767px) {
+  ul { max-width: 100%; }
+
+  .profile-pic-wrapper {
+    height: 40vmin;
+    margin: 8px;
+    padding: 0;
+  }
+
+  .profile-pic {
+    height: 40vmin;
+    width: 40vmin;
+  }
+}
+
+@media (max-device-width: 1280px) and (orientation: landscape) {
+  .person-profile-container {
+    padding: 0 2vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .details {
+    max-width: 50vw;
+  }
+}

@@ -56,7 +56,11 @@
   padding: 8px;
 }
 
-@media only screen and (max-width: 600px) {
+.side-nav-container {
+  min-height: 100%;
+}
+
+@media only screen and (max-width: 767px) {
   .search-options {
     margin-top: 8px;
     margin-bottom: 20px;
@@ -77,6 +81,10 @@
     height: 100%;
     width: 100%;
     padding: 0;
+  }
+
+  .details-section-wrapper {
+    border: none;
   }
 
   .side-nav-container {

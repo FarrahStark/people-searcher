@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DrawerService } from './services/drawer.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+  constructor(public drawerService: DrawerService) {
+  }
 }
